@@ -1,7 +1,7 @@
-import type { Todo, TodoInput } from "./types";
+import type { Todo, CreateTodoInput } from "../types/todo";
 
-//const BASE = `${import.meta.env.VITE_API_URL ?? ""}/api/todos`;
-const BASE = `http://localhost:5000/api/todos`;
+const BASE = `${import.meta.env.VITE_API_URL}/api/todos`;
+//const BASE = `http://localhost:5000/api/todos`;
 
 async function request<T>(path = "", options: RequestInit = {}): Promise<T> {
   let res: Response;
@@ -24,6 +24,7 @@ async function request<T>(path = "", options: RequestInit = {}): Promise<T> {
   } catch {
     /* non-JSON response */
   }
+
   if (!res.ok) {
     const message = (data as { error?: string } | null)?.error;
     throw new Error(message || `Request failed (${res.status})`);
@@ -35,11 +36,11 @@ async function request<T>(path = "", options: RequestInit = {}): Promise<T> {
 export const listTodos = () => request<Todo[]>();
 
 // POST /api/todos
-export const createTodo = (input: TodoInput) =>
+export const createTodo = (input: CreateTodoInput) =>
   request<Todo>("", { method: "POST", body: JSON.stringify(input) });
 
 // PUT /api/todos/:id
-export const updateTodo = (id: string, input: TodoInput) =>
+export const updateTodo = (id: string, input: CreateTodoInput) =>
   request<Todo>(`/${id}`, { method: "PUT", body: JSON.stringify(input) });
 
 // PATCH /api/todos/:id/done

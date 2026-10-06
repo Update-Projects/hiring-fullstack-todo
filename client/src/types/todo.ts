@@ -12,9 +12,3 @@ export type CreateTodoInput = {
   description?: string;
   done?: boolean;
 };
-
-export type TodoInput = {
-  title: string;
-  description?: string;
-  done?: boolean;
-};

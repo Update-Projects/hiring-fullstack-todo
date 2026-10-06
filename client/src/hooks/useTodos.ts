@@ -5,7 +5,7 @@ import {
   listTodos,
   setTodoDone as setTodoDoneApi,
   updateTodo as updateTodoApi,
-} from "../api";
+} from "../api/todos";
 import type { CreateTodoInput, Todo } from "../types/todo";
 
 export function useTodos() {
@@ -41,17 +41,14 @@ export function useTodos() {
     } catch (error) {
       console.error("Failed to load todos:", error);
       setError("Unable to load your tasks. Please try again.");
+      throw error;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      void loadTodos();
-    }, 0);
-
-    return () => clearTimeout(timeoutId);
+    loadTodos();
   }, [loadTodos]);
 
   const addTodo = useCallback(async (input: CreateTodoInput) => {
@@ -70,6 +67,7 @@ export function useTodos() {
     } catch (error) {
       console.error("Failed to create todo:", error);
       setError("Unable to create the task.");
+      throw error;
     }
   }, []);
 
@@ -104,6 +102,7 @@ export function useTodos() {
         console.error("Failed to update task status:", error);
         setTodos(previousTodos);
         setError("Unable to update the task status.");
+        throw error;
       }
     },
     [todos],
@@ -119,8 +118,6 @@ export function useTodos() {
           return;
         }
 
-        console.log("currentTodo:", currentTodo);
-        console.log("changes:", changes);
         const updatedTodo = await updateTodoApi(todoId, {
           ...currentTodo,
           ...changes,
@@ -134,6 +131,7 @@ export function useTodos() {
       } catch (error) {
         console.error("Failed to update todo:", error);
         setError("Unable to update the task.");
+        throw error;
       }
     },
     [todos],
@@ -169,6 +167,7 @@ export function useTodos() {
         }
 
         setError("Unable to delete the task.");
+        throw error;
       }
     },
     [todos, selectedTodoId],

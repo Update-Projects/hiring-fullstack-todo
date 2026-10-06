@@ -8,6 +8,7 @@ import { TaskModal } from "./TaskModal";
 import { useToast } from "../../hooks/useToast";
 import { ToastContainer } from "../ui/ToastContainer";
 import { ConfirmModal } from "./ConfirmModal";
+import { formatDateTime } from "../../lib/date";
 
 type TodoPageProps = {
   todos: Todo[];
@@ -15,8 +16,8 @@ type TodoPageProps = {
   selectedTodoId: string | null;
   onAddTodo: (input: CreateTodoInput) => void;
   onUpdateTodo: (todoId: string, input: CreateTodoInput) => Promise<void>;
-  onToggleTodo: (todoId: string) => void;
-  onDeleteTodo: (todoId: string) => void;
+  onToggleTodo: (todoId: string) => Promise<void>;
+  onDeleteTodo: (todoId: string) => Promise<void>;
   onSelectTodo: (todoId: string | null) => void;
 };
 
@@ -58,21 +59,30 @@ export function TodoPage({
   };
 
   const handleTaskSubmit = async (input: CreateTodoInput) => {
-    if (editingTodo) {
-      await onUpdateTodo(editingTodo._id, input);
-      showToast("success", {
-        title: "Task created",
-        message: `"${input.title}" was added to your list.`,
+    try {
+      if (editingTodo) {
+        await onUpdateTodo(editingTodo._id, input);
+
+        showToast("success", {
+          title: "Task updated",
+          message: `"${input.title}" was updated.`,
+        });
+      } else {
+        await onAddTodo(input);
+
+        showToast("success", {
+          title: "Task created",
+          message: `"${input.title}" was added to your list.`,
+        });
+      }
+
+      handleCloseTaskModal();
+    } catch {
+      showToast("error", {
+        title: editingTodo ? "Could not update task" : "Could not create task",
+        message: "Please try again.",
       });
-      return;
     }
-
-    await onAddTodo(input);
-
-    showToast("success", {
-      title: "Task created",
-      message: `"${input.title}" was added to your list.`,
-    });
   };
 
   const handleRequestDelete = (todo: Todo) => {
@@ -81,9 +91,7 @@ export function TodoPage({
   };
 
   const handleConfirmDelete = async () => {
-    if (!todoToDelete) {
-      return;
-    }
+    if (!todoToDelete) return;
 
     try {
       setIsDeleting(true);
@@ -105,6 +113,7 @@ export function TodoPage({
       setIsDeleting(false);
     }
   };
+
   return (
     <>
       <ToastContainer notifications={toasts} onClose={removeToast} />
@@ -125,12 +134,7 @@ export function TodoPage({
                   className="text-blue-500"
                   aria-hidden="true"
                 />
-                {new Date().toLocaleDateString(undefined, {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDateTime(new Date())}
               </p>
             </div>
 

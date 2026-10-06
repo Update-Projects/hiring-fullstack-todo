@@ -21,7 +21,7 @@ export function TaskList({
   if (todos.length === 0) {
     return (
       <div className="px-5 py-16 text-center">
-        <h3 className="mb-2 text-sm font-semibold text-slate-600">
+        <h3 className="mb-2 text-md font-semibold text-slate-600">
           No tasks found
         </h3>
       </div>

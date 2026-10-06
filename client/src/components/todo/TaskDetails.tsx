@@ -2,6 +2,8 @@ import { Trash2, X } from "lucide-react";
 import type { Todo } from "../../types/todo";
 import { Button } from "../ui/Button";
 import { IconButton } from "../ui/IconButton";
+import { Badge } from "../ui/Badge";
+import { formatDateTime } from "../../lib/date";
 
 type TaskDetailsProps = {
   todo: Todo | null;
@@ -10,17 +12,6 @@ type TaskDetailsProps = {
 };
 
 export function TaskDetails({ todo, onDelete, onClose }: TaskDetailsProps) {
-  function formatTodoDate(dateValue?: string) {
-    if (!dateValue) {
-      return "No due date";
-    }
-
-    return new Date(dateValue).toLocaleDateString(undefined, {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-  }
   return (
     <aside className="flex min-w-0 flex-col border-t border-slate-200 bg-white md:border-t-0 md:border-l">
       <header className="flex min-h-14 items-center justify-between border-b border-slate-100 px-4">
@@ -32,43 +23,55 @@ export function TaskDetails({ todo, onDelete, onClose }: TaskDetailsProps) {
       </header>
 
       {!todo ? (
-        <div className="p-5 text-xs text-slate-500">
+        <div className="p-5 text-md text-slate-500">
           Select a task to view its details.
         </div>
       ) : (
         <>
           <div className="flex-1 p-[18px]">
-            <h3 className="mb-2 text-[13px] font-semibold leading-relaxed text-slate-800">
+            <h3 className="mb-2 text-sm font-semibold leading-relaxed text-slate-800">
               Created At
             </h3>
-            <p className="mb-2 text-[12px] leading-relaxed text-slate-600">
+            <p className="mb-2 text-sm leading-relaxed text-slate-600">
               {todo.createdAt
-                ? formatTodoDate(todo.createdAt)
+                ? formatDateTime(todo.createdAt)
                 : "No creation date available."}
             </p>
 
-            <h3 className="mb-2 text-[13px] font-semibold leading-relaxed text-slate-800">
+            <h3 className="mb-2 text-sm  font-semibold leading-relaxed text-slate-800">
               Updated At
             </h3>
-            <p className="mb-2 text-[12px] leading-relaxed text-slate-600">
+            <p className="mb-2 text-sm leading-relaxed text-slate-600">
               {todo.updatedAt
-                ? formatTodoDate(todo.updatedAt)
+                ? formatDateTime(todo.updatedAt)
                 : "No update date available."}
             </p>
 
-            <h3 className="mb-2 text-[13px] font-semibold leading-relaxed text-slate-800">
+            <h3 className="mb-2 text-sm font-semibold leading-relaxed text-slate-800">
               Title
             </h3>
-            <p className="mb-2 text-[12px] leading-relaxed text-slate-600">
+            <p className="mb-2 text-sm leading-relaxed text-slate-600">
               {todo.title || "No title available."}
             </p>
 
-            <h3 className="mb-2 text-[13px] font-semibold leading-relaxed text-slate-800">
+            <h3 className="mb-2 text-sm font-semibold text-slate-800">
+              Status
+            </h3>
+
+            <p className="mb-4 text-sm text-slate-600">
+              {todo.done ? (
+                <Badge color="#eaf1ff">Marked as complete</Badge>
+              ) : (
+                <Badge color="#ffebee">Marked as incomplete</Badge>
+              )}
+            </p>
+
+            <h3 className="mb-2 text-sm font-semibold leading-relaxed text-slate-800">
               Description
             </h3>
 
             <div className="grid gap-2">
-              <p className="m-0 text-[12px] leading-relaxed text-slate-600">
+              <p className="m-0 text-sm leading-relaxed text-slate-600">
                 {todo.description || "No description available."}
               </p>
             </div>

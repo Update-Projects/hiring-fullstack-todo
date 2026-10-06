@@ -3,10 +3,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const todosRouter = require("./routes/todos");
 
-const connectDB = require("./config/db");
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
-
 dotenv.config();
+
+const connectDB = require("./config/db");
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost";
 
 const app = express();
 

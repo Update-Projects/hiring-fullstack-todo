@@ -27,11 +27,11 @@ export function TaskModal({ open, todo, onClose, onSubmit }: TaskModalProps) {
   const isEditMode = Boolean(todo);
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState(" ");
+  const [description, setDescription] = useState("");
   const [done, setDone] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [titleError, setTitleError] = useState(" ");
-  const [descriptionError, setDescriptionError] = useState(" ");
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
 
   useEffect(() => {
     if (!open) {
@@ -50,20 +50,21 @@ export function TaskModal({ open, todo, onClose, onSubmit }: TaskModalProps) {
 
     setTitle(emptyForm.title);
     setDescription(emptyForm.description ?? "");
-    setDone(emptyForm.done);
+    setDone(emptyForm.done ?? false);
   }, [open, todo]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim();
 
     if (!trimmedTitle) {
       setTitleError("Task title is required.");
       return;
     }
 
-    if (!description) {
+    if (!trimmedDescription) {
       setDescriptionError("Task description is required.");
       return;
     }
@@ -76,11 +77,13 @@ export function TaskModal({ open, todo, onClose, onSubmit }: TaskModalProps) {
 
       await onSubmit({
         title: trimmedTitle,
-        description: description.trim() || undefined,
-        done: done,
+        description: trimmedDescription,
+        done,
       });
 
       onClose();
+    } catch (error) {
+      console.error("Error submitting form:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +101,7 @@ export function TaskModal({ open, todo, onClose, onSubmit }: TaskModalProps) {
           <input
             autoFocus
             value={title}
-            placeholder="e.g. Finish project documentation"
+            placeholder="e.g. Task title"
             onChange={(event) => {
               setTitle(event.target.value);
 
@@ -118,7 +121,7 @@ export function TaskModal({ open, todo, onClose, onSubmit }: TaskModalProps) {
           <p
             id="task-title-error"
             role="alert"
-            className=" px-1- py-1 text-sm font-medium text-red-600"
+            className="px-1 py-1 text-sm font-medium text-red-600"
           >
             {titleError}
           </p>

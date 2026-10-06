@@ -1,6 +1,7 @@
 import { Check, Pen, Trash2, CalendarDays } from "lucide-react";
 import type { Todo } from "../../types/todo";
 import { Button } from "../ui/Button";
+import { formatDateTime } from "../../lib/date";
 
 type TaskItemProps = {
   todo: Todo;
@@ -28,29 +29,27 @@ export function TaskItem({
     onToggle(todo._id);
   };
 
-  function formatTodoDate(dateValue?: string) {
-    if (!dateValue) {
-      return "No due date";
-    }
+  const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onEdit(todo);
+  };
 
-    return new Date(dateValue).toLocaleDateString(undefined, {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-  }
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onDelete(todo);
+  };
 
   return (
     <article
       className={[
         "group relative flex cursor-pointer items-start gap-3",
         "border-b border-slate-100 px-4 py-4 transition-colors",
-        selected ? "bg-blue-50/60" : "bg-white hover:bg-slate-50/80",
+        selected ? "bg-green-50/60" : "bg-white hover:bg-slate-50/80",
       ].join(" ")}
       onClick={handleSelect}
     >
       {selected && (
-        <span className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-blue-600" />
+        <span className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-green-600" />
       )}
 
       <button
@@ -89,7 +88,7 @@ export function TaskItem({
           <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-500">
             <CalendarDays size={14} className="shrink-0 text-blue-500" />
 
-            <span>Created {formatTodoDate(todo.createdAt)}</span>
+            <span>Created {formatDateTime(todo.createdAt)}</span>
           </div>
         )}
 
@@ -104,7 +103,7 @@ export function TaskItem({
         <Button
           variant="success"
           className="bg-transparent hover:bg-transparent hover:text-green-300"
-          onClick={() => onEdit(todo)}
+          onClick={handleEdit}
         >
           <Pen
             size={16}
@@ -119,7 +118,7 @@ export function TaskItem({
         <Button
           variant="danger"
           className="bg-transparent hover:bg-transparent hover:text-red-300"
-          onClick={() => onDelete(todo)}
+          onClick={handleDelete}
         >
           <Trash2
             size={16}

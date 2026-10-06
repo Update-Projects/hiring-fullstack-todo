@@ -7,13 +7,6 @@ const router = Router();
 
 const cleanText = (value) => (typeof value === "string" ? value.trim() : "");
 
-// Reject malformed ids before they hit MongoDB
-router.param("id", (_req, _res, next, id) => {
-  if (!mongoose.isValidObjectId(id))
-    return next(new HttpError(400, "Invalid todo id"));
-  next();
-});
-
 // GET /api/todos - get all TODO items
 router.get("/", async (_req, res, next) => {
   try {
@@ -48,17 +41,19 @@ router.put("/:id", async (req, res, next) => {
     const todo = await Todo.findByIdAndUpdate(
       req.params.id,
       { title, description },
-      { new: true, runValidators: true },
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
     );
     if (!todo) throw new HttpError(404, "Todo not found");
-    res.json(todo);
+    res.status(200).json(todo);
   } catch (err) {
     next(err);
   }
 });
 
 // PATCH /api/todos/:id/done - toggle the done status
-// Body is optional: { "done": true } sets it explicitly, no body flips the current value.
 router.patch("/:id/done", async (req, res, next) => {
   try {
     const explicit = req.body?.done;
@@ -71,10 +66,13 @@ router.patch("/:id/done", async (req, res, next) => {
       typeof explicit === "boolean"
         ? { done: explicit }
         : [{ $set: { done: { $not: "$done" } } }],
-      { new: true },
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
     );
     if (!todo) throw new HttpError(404, "Todo not found");
-    res.json(todo);
+    res.status(200).json(todo);
   } catch (err) {
     next(err);
   }
