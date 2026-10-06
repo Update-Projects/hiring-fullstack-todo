@@ -28,7 +28,7 @@ export function TaskDetails({ todo, onDelete, onClose }: TaskDetailsProps) {
         </div>
       ) : (
         <>
-          <div className="flex-1 p-[18px]">
+          <div className="flex-1 p-4">
             <h3 className="mb-2 text-sm font-semibold leading-relaxed text-slate-800">
               Created At
             </h3>
@@ -77,7 +77,7 @@ export function TaskDetails({ todo, onDelete, onClose }: TaskDetailsProps) {
             </div>
           </div>
 
-          <footer className="border-t border-slate-100 px-[18px] py-3">
+          <footer className="border-t border-slate-100 px-2 py-3">
             <Button
               variant="danger"
               className="bg-transparent hover:bg-transparent hover:text-red-300"
