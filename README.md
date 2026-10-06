@@ -10,7 +10,7 @@ A Todo application with a React/Vite frontend, Express API, and MongoDB database
 
 ### Configure environment
 
-Create a `.env` file in the `server` directory with the following values:
+Rename `.env.example` to `.env` in directory `server` with the following values:
 
 ```dotenv
 PORT=5000
